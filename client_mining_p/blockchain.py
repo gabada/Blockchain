@@ -150,7 +150,10 @@ def mine():
     if not all(k in values for k in required):
         return 'Missing Values', 400
     if Blockchain.valid_proof(last_proof, values['proof']) is False:
-        return 'Invalid Proof', 400
+        response = {
+            'message': 'Proof is invalid or already submitted'
+        }
+        return jsonify(response), 200
     else:
         blockchain.new_transaction(0, node_identifier, 1)
         block = blockchain.new_block(values['proof'], blockchain.hash(last_block))    

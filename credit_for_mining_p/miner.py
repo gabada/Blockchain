@@ -2,6 +2,9 @@ import hashlib
 import requests
 
 import sys
+import pathlib
+import uuid
+import os
 
 
 def proof_of_work(last_proof):
@@ -36,9 +39,28 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         node = int(sys.argv[1])
     else:
-        node = "http://localhost:5000"
+        node = "http://localhost:5001"
 
     coins_mined = 0
+    file = pathlib.Path("my_id.txt")
+    if file.exists():
+        if os.stat(file).st_size == 0:
+            f = open(file, "w+")
+            new_uuid = uuid.uuid4().hex
+            f.write(new_uuid)
+            f.close()
+            sender_id = new_uuid
+        else:
+            f = open(file, "r")
+            sender_id = f.read()
+            f.close()
+    else:
+        f = open(file, "w+")
+        new_uuid = uuid.uuid4().hex
+        f.write(new_uuid)
+        f.close()
+        sender_id = new_uuid
+
     # Run forever until interrupted
     while True:
         # Get the last proof from the server
@@ -46,7 +68,7 @@ if __name__ == '__main__':
         data = r.json()
         new_proof = proof_of_work(data.get('proof'))
 
-        post_data = {"proof": new_proof}
+        post_data = {"proof": new_proof, "id": sender_id}
 
         r = requests.post(url=node + "/mine", json=post_data)
         data = r.json()

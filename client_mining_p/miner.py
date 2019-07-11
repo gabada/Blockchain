@@ -32,7 +32,8 @@ if __name__ == '__main__':
         # TODO: Get the last proof from the server and look for a new one
         r = requests.get(url=node + "/last_proof")
         data = r.json()
-        new_proof = proof_of_work(data.get('proof'))
+        last_proof = data['proof']
+        new_proof = proof_of_work(last_proof)
         # TODO: When found, POST it to the server {"proof": new_proof}
         post_data = {"proof": new_proof}
         r = requests.post(url=node + "/mine", json=post_data)
@@ -43,6 +44,6 @@ if __name__ == '__main__':
         #     # add 1 to the number of coins mined and print it.  Otherwise,
             coins_mined += 1
         #     # print the message from the server.
-            print("Total coins mined: " + str(coins_mined))
+            print("Total coins mined: ", coins_mined)
         else:
             print(data.get('message'))
