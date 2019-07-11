@@ -44,7 +44,7 @@ if __name__ == '__main__':
     coins_mined = 0
     file = pathlib.Path("my_id.txt")
     if file.exists():
-        if os.stat(file).st_size == 0:
+        if os.stat(file).st_size == 0 or os.stat(file).st_size > 32:
             f = open(file, "w+")
             new_uuid = uuid.uuid4().hex
             f.write(new_uuid)
